@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Action Engine for Small Businesses</title>
+  <style>
+    :root{
+      --bg:#08111f;
+      --panel:#0f1b31;
+      --panel-2:#132443;
+      --soft:#1a2f56;
+      --line:#294372;
+      --text:#edf3ff;
+      --muted:#9fb2d7;
+      --good:#35d49a;
+      --warn:#ffb84d;
+      --bad:#ff6b6b;
+      --glow:0 12px 40px rgba(0,0,0,.28);
+      --radius:20px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:linear-gradient(180deg,#07101d 0%, #0a1425 100%);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    body{min-height:100vh}
+    .wrap{max-width:1400px;margin:0 auto;padding:18px}
+    .hero{
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:16px;
+      margin-bottom:16px;
+    }
+    .card{
+      background:linear-gradient(180deg,rgba(19,36,67,.95),rgba(12,24,45,.98));
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--glow);
+    }
+    .hero-main{padding:22px}
+    .hero-side{padding:18px;display:grid;gap:12px}
+    .eyebrow{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 12px;border-radius:999px;background:rgba(53,212,154,.12);
+      color:#c7ffe8;border:1px solid rgba(53,212,154,.2);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase
+    }
+    h1{font-size:clamp(28px,4vw,48px);line-height:1.02;margin:14px 0 8px}
+    .sub{color:var(--muted);font-size:16px;line-height:1.5;max-width:900px}
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .stat{
+      padding:14px;border-radius:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)
+    }
+    .stat small{display:block;color:var(--muted);margin-bottom:6px}
+    .stat strong{font-size:24px}
+    .layout{
+      display:grid;
+      grid-template-columns:440px 1fr;
+      gap:16px;
+      align-items:start;
+    }
+    .panel{padding:18px}
+    .section-title{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}
+    .section-title h2{font-size:18px;margin:0}
+    .section-title p{margin:2px 0 0;color:var(--muted);font-size:13px}
+    .grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+    .field{
+      display:grid;
+      gap:8px;
+      margin-bottom:12px;
+    }
+    .field.full{grid-column:1/-1}
+    label{font-size:13px;font-weight:700;color:#d9e4ff}
+    input,select,textarea{
+      width:100%;background:#091425;color:var(--text);
+      border:1px solid var(--line);border-radius:14px;padding:13px 14px;
+      outline:none;font:inherit;transition:.2s ease;
+    }
+    textarea{min-height:88px;resize:vertical}
+    input:focus,select:focus,textarea:focus{border-color:#4d78c5;box-shadow:0 0 0 4px rgba(77,120,197,.15)}
+    .chips{display:flex;flex-wrap:wrap;gap:8px}
+    .chip{
+      border:1px solid var(--line);background:#0b1629;color:#dce7ff;border-radius:999px;
+      padding:10px 12px;font-size:13px;cursor:pointer;user-select:none;transition:.15s ease
+    }
+    .chip.active{background:#17325d;border-color:#4e79c7}
+    .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+    button{
+      border:none;border-radius:14px;padding:13px 16px;font:inherit;font-weight:800;cursor:pointer;
+      transition:transform .08s ease, opacity .2s ease, background .2s ease;
+    }
+    button:active{transform:translateY(1px)}
+    .primary{background:linear-gradient(135deg,#56a3ff,#4fd0af);color:#05111d}
+    .secondary{background:#11203d;color:#dbe7ff;border:1px solid var(--line)}
+    .ghost{background:transparent;color:#cddcff;border:1px dashed var(--line)}
+    .dashboard{display:grid;gap:16px}
+    .summary{
+      display:grid;grid-template-columns:repeat(4,1fr);gap:12px;
+    }
+    .metric{
+      padding:16px;border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.07)
+    }
+    .metric small{display:block;color:var(--muted);margin-bottom:8px}
+    .metric strong{font-size:28px;display:block}
+    .metric span{display:block;margin-top:8px;color:#c8d6f6;font-size:13px;line-height:1.45}
+    .two-col{display:grid;grid-template-columns:1.15fr .85fr;gap:16px}
+    .list{display:grid;gap:12px}
+    .task{
+      padding:16px;border-radius:18px;border:1px solid var(--line);background:linear-gradient(180deg,rgba(13,24,46,.85),rgba(9,18,35,.96));
+    }
+    .task-top{display:flex;gap:10px;justify-content:space-between;align-items:flex-start}
+    .task h3{margin:0 0 6px;font-size:18px}
+    .task p{margin:0;color:#d3def8;line-height:1.5}
+    .pill{
+      flex-shrink:0;padding:8px 10px;border-radius:999px;font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase
+    }
+    .pill.high{background:rgba(255,107,107,.13);color:#ffd0d0;border:1px solid rgba(255,107,107,.22)}
+    .pill.medium{background:rgba(255,184,77,.13);color:#ffe5bc;border:1px solid rgba(255,184,77,.22)}
+    .pill.low{background:rgba(53,212,154,.13);color:#d0ffef;border:1px solid rgba(53,212,154,.22)}
+    .task-meta{
+      display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px
+    }
+    .mini{
+      padding:10px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)
+    }
+    .mini small{display:block;color:var(--muted);margin-bottom:6px}
+    .mini strong{font-size:15px}
+    .script,.mini-card{
+      padding:16px;border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.07)
+    }
+    .script h3,.mini-card h3{margin:0 0 12px;font-size:17px}
+    .script-box{
+      background:#091425;border:1px solid var(--line);border-radius:16px;padding:14px;color:#edf3ff;line-height:1.55;white-space:pre-wrap
+    }
+    .timeline{display:grid;gap:12px}
+    .step{
+      display:grid;grid-template-columns:62px 1fr;gap:12px;align-items:start
+    }
+    .step-num{
+      height:42px;width:42px;border-radius:50%;display:grid;place-items:center;font-weight:900;
+      background:linear-gradient(135deg,#55a6ff,#4fd0af);color:#05111d;margin-top:2px
+    }
+    .step-card{
+      padding:14px;border-radius:16px;background:#0b1629;border:1px solid var(--line)
+    }
+    .step-card h4{margin:0 0 8px}
+    .step-card p{margin:0;color:#d4dff8;line-height:1.5}
+    .empty{
+      padding:22px;border-radius:18px;border:1px dashed var(--line);color:var(--muted);text-align:center
+    }
+    .tiny{font-size:12px;color:var(--muted)}
+    .footer-note{margin-top:10px;color:var(--muted);font-size:12px;line-height:1.5}
+    .highlight{color:#a6ffd9}
+    .warn{color:#ffd59a}
+    .danger{color:#ffb3b3}
+    .badgebar{display:flex;flex-wrap:wrap;gap:8px}
+    .badge{
+      padding:8px 10px;border-radius:999px;background:#0b1629;border:1px solid var(--line);
+      font-size:12px;color:#d7e3ff
+    }
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+    @media (max-width:1100px){
+      .hero,.layout,.two-col{grid-template-columns:1fr}
+      .summary{grid-template-columns:repeat(2,1fr)}
+    }
+    @media (max-width:720px){
+      .grid,.stats,.summary,.task-meta{grid-template-columns:1fr}
+      .wrap{padding:12px}
+      .hero-main,.panel{padding:15px}
+      .step{grid-template-columns:46px 1fr}
+      .step-num{width:36px;height:36px}
+      h1{font-size:31px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div class="card hero-main">
+        <div class="eyebrow">AI Action Engine • Small Business Growth System</div>
+        <h1>Stop guessing. Get the next <span class="highlight">money-making move</span> for today.</h1>
+        <p class="sub">
+          This engine turns basic business numbers into a ranked action plan: what to do first, how much money it could unlock,
+          what to say, and what to fix before revenue leaks harder.
+        </p>
+        <div class="stats">
+          <div class="stat"><small>Built for</small><strong>Service businesses</strong></div>
+          <div class="stat"><small>Main outcome</small><strong>More cash, faster</strong></div>
+          <div class="stat"><small>Output</small><strong>Today's action plan</strong></div>
+        </div>
+      </div>
+      <div class="card hero-side">
+        <div class="mini-card">
+          <h3>What this system does</h3>
+          <div class="badgebar">
+            <div class="badge">Find revenue leaks</div>
+            <div class="badge">Prioritise next action</div>
+            <div class="badge">Estimate cash impact</div>
+            <div class="badge">Generate follow-up scripts</div>
+            <div class="badge">Save plans locally</div>
+          </div>
+        </div>
+        <div class="mini-card">
+          <h3>Best for</h3>
+          <p class="tiny">
+            Contractors, consultants, agencies, salons, repair shops, installers, coaches, local stores, and any owner who needs
+            a direct answer to: <span class="highlight">“What should I do today to make more money?”</span>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <div class="layout">
+      <aside class="card panel">
+        <div class="section-title">
+          <div>
+            <h2>Business Input</h2>
+            <p>Fill in your numbers. The engine will rank the highest-value move.</p>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="field">
+            <label for="businessName">Business name</label>
+            <input id="businessName" type="text" placeholder="Example: Cape Fix Electrical" />
+          </div>
+
+          <div class="field">
+            <label for="businessType">Business type</label>
+            <select id="businessType">
+              <option value="General Service">General Service</option>
+              <option value="Contractor">Contractor</option>
+              <option value="Agency">Agency</option>
+              <option value="Repair Shop">Repair Shop</option>
+              <option value="Salon / Beauty">Salon / Beauty</option>
+              <option value="Consulting">Consulting</option>
+              <option value="Retail">Retail</option>
+              <option value="Coaching">Coaching</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="monthlyRevenue">Average monthly revenue (R)</label>
+            <input id="monthlyRevenue" type="number" min="0" step="100" placeholder="45000" />
+          </div>
+
+          <div class="field">
+            <label for="cashGoal">Cash target for the next 7 days (R)</label>
+            <input id="cashGoal" type="number" min="0" step="100" placeholder="12000" />
+          </div>
+
+          <div class="field">
+            <label for="avgSale">Average sale value (R)</label>
+            <input id="avgSale" type="number" min="0" step="50" placeholder="1800" />
+          </div>
+
+          <div class="field">
+            <label for="profitMargin">Average profit margin (%)</label>
+            <input id="profitMargin" type="number" min="0" max="100" step="1" placeholder="35" />
+          </div>
+
+          <div class="field">
+            <label for="newLeads">New leads in the last 7 days</label>
+            <input id="newLeads" type="number" min="0" step="1" placeholder="18" />
+          </div>
+
+          <div class="field">
+            <label for="staleLeads">Leads not followed up within 24h</label>
+            <input id="staleLeads" type="number" min="0" step="1" placeholder="6" />
+          </div>
+
+          <div class="field">
+            <label for="openQuotes">Open quotes / proposals</label>
+            <input id="openQuotes" type="number" min="0" step="1" placeholder="9" />
+          </div>
+
+          <div class="field">
+            <label for="quoteValue">Total value of open quotes (R)</label>
+            <input id="quoteValue" type="number" min="0" step="100" placeholder="35000" />
+          </div>
+
+          <div class="field">
+            <label for="overdueInvoices">Overdue invoices count</label>
+            <input id="overdueInvoices" type="number" min="0" step="1" placeholder="4" />
+          </div>
+
+          <div class="field">
+            <label for="overdueValue">Overdue invoice value (R)</label>
+            <input id="overdueValue" type="number" min="0" step="100" placeholder="9800" />
+          </div>
+
+          <div class="field">
+            <label for="repeatCustomers">Repeat customers you can reactivate now</label>
+            <input id="repeatCustomers" type="number" min="0" step="1" placeholder="22" />
+          </div>
+
+          <div class="field">
+            <label for="upsellValue">Average upsell / repeat order value (R)</label>
+            <input id="upsellValue" type="number" min="0" step="50" placeholder="1200" />
+          </div>
+
+          <div class="field">
+            <label for="noShowRate">No-show / cancellation rate (%)</label>
+            <input id="noShowRate" type="number" min="0" max="100" step="1" placeholder="18" />
+          </div>
+
+          <div class="field">
+            <label for="responseTime">Average lead response time (hours)</label>
+            <input id="responseTime" type="number" min="0" step="1" placeholder="5" />
+          </div>
+
+          <div class="field">
+            <label for="websiteVisits">Website / profile visits in last 7 days</label>
+            <input id="websiteVisits" type="number" min="0" step="1" placeholder="320" />
+          </div>
+
+          <div class="field">
+            <label for="conversionRate">Lead conversion rate (%)</label>
+            <input id="conversionRate" type="number" min="0" max="100" step="1" placeholder="18" />
+          </div>
+
+          <div class="field">
+            <label for="stockValue">Slow-moving stock / unused capacity value (R)</label>
+            <input id="stockValue" type="number" min="0" step="100" placeholder="6000" />
+          </div>
+
+          <div class="field">
+            <label for="spareCapacity">Spare appointment / job slots this week</label>
+            <input id="spareCapacity" type="number" min="0" step="1" placeholder="8" />
+          </div>
+
+          <div class="field full">
+            <label>Active channels</label>
+            <div class="chips" id="channelChips">
+              <div class="chip active" data-value="WhatsApp">WhatsApp</div>
+              <div class="chip active" data-value="Facebook">Facebook</div>
+              <div class="chip" data-value="Instagram">Instagram</div>
+              <div class="chip" data-value="Email">Email</div>
+              <div class="chip" data-value="Google Business">Google Business</div>
+              <div class="chip" data-value="Calls">Calls</div>
+              <div class="chip" data-value="Walk-ins">Walk-ins</div>
+              <div class="chip" data-value="Referrals">Referrals</div>
+            </div>
+          </div>
+
+          <div class="field full">
+            <label>Biggest pain points</label>
+            <div class="chips" id="painChips">
+              <div class="chip active" data-value="Not enough leads">Not enough leads</div>
+              <div class="chip active" data-value="Slow follow-up">Slow follow-up</div>
+              <div class="chip" data-value="Too many no-shows">Too many no-shows</div>
+              <div class="chip" data-value="Clients delaying payment">Clients delaying payment</div>
+              <div class="chip" data-value="Quotes not closing">Quotes not closing</div>
+              <div class="chip" data-value="Low repeat business">Low repeat business</div>
+              <div class="chip" data-value="Idle staff / empty slots">Idle staff / empty slots</div>
+              <div class="chip" data-value="Slow stock">Slow stock</div>
+            </div>
+          </div>
+
+          <div class="field full">
+            <label for="notes">Extra notes</label>
+            <textarea id="notes" placeholder="Example: Most leads come from WhatsApp. Clients delay approval. Fridays are usually quiet."></textarea>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="primary" id="runBtn">Run AI Action Plan</button>
+          <button class="secondary" id="saveBtn">Save Inputs</button>
+          <button class="secondary" id="loadBtn">Load Saved</button>
+          <button class="ghost" id="resetBtn">Reset</button>
+        </div>
+        <div class="footer-note">
+          This engine runs fully in your browser and stores saved data on this device only.
+        </div>
+      </aside>
+
+      <main class="dashboard">
+        <section class="card panel">
+          <div class="section-title">
+            <div>
+              <h2>Today’s Output</h2>
+              <p>The engine ranks the next moves by speed, impact, and likelihood of turning into cash.</p>
+            </div>
+          </div>
+
+          <div class="summary" id="summaryCards">
+            <div class="metric">
+              <small>Top Action</small>
+              <strong>—</strong>
+              <span>Run the engine to see the highest-value move.</span>
+            </div>
+            <div class="metric">
+              <small>Fast Cash Potential</small>
+              <strong>R0</strong>
+              <span>Estimated revenue that can be unlocked fastest.</span>
+            </div>
+            <div class="metric">
+              <small>Revenue Leak</small>
+              <strong>R0</strong>
+              <span>Money likely being left on the table.</span>
+            </div>
+            <div class="metric">
+              <small>Profit Potential</small>
+              <strong>R0</strong>
+              <span>Estimated profit from the recommended actions.</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="two-col">
+          <div class="card panel">
+            <div class="section-title">
+              <div>
+                <h2>Ranked Action Plan</h2>
+                <p>Do the first thing first. Cash beats busywork.</p>
+              </div>
+            </div>
+            <div id="taskList" class="list">
+              <div class="empty">No action plan yet. Enter numbers and run the engine.</div>
+            </div>
+          </div>
+
+          <div class="card panel">
+            <div class="section-title">
+              <div>
+                <h2>Execution Pack</h2>
+                <p>Use the scripts and sprint plan immediately.</p>
+              </div>
+            </div>
+
+            <div class="list">
+              <div class="script">
+                <h3>Best Follow-Up Script</h3>
+                <div class="script-box" id="scriptBox">Run the engine to generate a tailored script.</div>
+              </div>
+
+              <div class="mini-card">
+                <h3>90-Minute Money Sprint</h3>
+                <div id="timelineBox" class="timeline">
+                  <div class="empty">Your sprint plan appears here after analysis.</div>
+                </div>
+              </div>
+
+              <div class="mini-card">
+                <h3>Owner Insight</h3>
+                <div class="script-box" id="insightBox">No insight yet.</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card panel">
+          <div class="section-title">
+            <div>
+              <h2>Plan Export</h2>
+              <p>Copy, print, or save your action sheet.</p>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="secondary" id="copyBtn">Copy Plan</button>
+            <button class="secondary" id="printBtn">Print</button>
+            <button class="secondary" id="sampleBtn">Load Example Data</button>
+          </div>
+          <div class="footer-note tiny mono" id="status">Ready.</div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const currency = new Intl.NumberFormat('en-ZA', { style:'currency', currency:'ZAR', maximumFractionDigits:0 });
+  const storageKey = 'ai-action-engine-v1';
+
+  const ids = [
+    'businessName','businessType','monthlyRevenue','cashGoal','avgSale','profitMargin','newLeads','staleLeads',
+    'openQuotes','quoteValue','overdueInvoices','overdueValue','repeatCustomers','upsellValue','noShowRate',
+    'responseTime','websiteVisits','conversionRate','stockValue','spareCapacity','notes'
+  ];
+
+  const el = id => document.getElementById(id);
+  const num = id => Math.max(0, Number(el(id).value || 0));
+
+  function getSelected(containerId){
+    return [...document.querySelectorAll('#' + containerId + ' .chip.active')].map(x => x.dataset.value);
+  }
+
+  function setStatus(text){
+    el('status').textContent = text;
+  }
+
+  function formatMoney(v){
+    return currency.format(Math.round(v || 0));
+  }
+
+  function attachChipToggles(containerId){
+    document.querySelectorAll('#' + containerId + ' .chip').forEach(chip => {
+      chip.addEventListener('click', () => chip.classList.toggle('active'));
+    });
+  }
+
+  attachChipToggles('channelChips');
+  attachChipToggles('painChips');
+
+  function getData(){
+    return {
+      businessName: el('businessName').value.trim(),
+      businessType: el('businessType').value,
+      monthlyRevenue: num('monthlyRevenue'),
+      cashGoal: num('cashGoal'),
+      avgSale: num('avgSale'),
+      profitMargin: Math.min(100, num('profitMargin')),
+      newLeads: num('newLeads'),
+      staleLeads: num('staleLeads'),
+      openQuotes: num('openQuotes'),
+      quoteValue: num('quoteValue'),
+      overdueInvoices: num('overdueInvoices'),
+      overdueValue: num('overdueValue'),
+      repeatCustomers: num('repeatCustomers'),
+      upsellValue: num('upsellValue'),
+      noShowRate: Math.min(100, num('noShowRate')),
+      responseTime: num('responseTime'),
+      websiteVisits: num('websiteVisits'),
+      conversionRate: Math.min(100, num('conversionRate')),
+      stockValue: num('stockValue'),
+      spareCapacity: num('spareCapacity'),
+      notes: el('notes').value.trim(),
+      channels: getSelected('channelChips'),
+      pains: getSelected('painChips')
+    };
+  }
+
+  function setData(data){
+    ids.forEach(id => {
+      if(el(id)) el(id).value = data[id] ?? '';
+    });
+
+    document.querySelectorAll('#channelChips .chip').forEach(chip => {
+      chip.classList.toggle('active', (data.channels || []).includes(chip.dataset.value));
+    });
+    document.querySelectorAll('#painChips .chip').forEach(chip => {
+      chip.classList.toggle('active', (data.pains || []).includes(chip.dataset.value));
+    });
+  }
+
+  function saveData(){
+    const data = getData();
+    localStorage.setItem(storageKey, JSON.stringify(data));
+    setStatus('Saved locally on this device.');
+  }
+
+  function loadData(){
+    const raw = localStorage.getItem(storageKey);
+    if(!raw){
+      setStatus('No saved data found.');
+      return;
+    }
+    try{
+      setData(JSON.parse(raw));
+      setStatus('Saved data loaded.');
+    }catch{
+      setStatus('Could not load saved data.');
+    }
+  }
+
+  function resetData(){
+    ids.forEach(id => { if(el(id)) el(id).value = ''; });
+    document.querySelectorAll('.chip').forEach(chip => chip.classList.remove('active'));
+    document.querySelectorAll('#channelChips .chip[data-value="WhatsApp"], #channelChips .chip[data-value="Facebook"], #painChips .chip[data-value="Not enough leads"], #painChips .chip[data-value="Slow follow-up"]').forEach(chip => chip.classList.add('active'));
+    setStatus('Inputs reset.');
+  }
+
+  function sampleData(){
+    setData({
+      businessName:'Cape Fix Electrical',
+      businessType:'Contractor',
+      monthlyRevenue:58000,
+      cashGoal:15000,
+      avgSale:2600,
+      profitMargin:38,
+      newLeads:24,
+      staleLeads:7,
+      openQuotes:11,
+      quoteValue:48200,
+      overdueInvoices:3,
+      overdueValue:12400,
+      repeatCustomers:18,
+      upsellValue:1400,
+      noShowRate:12,
+      responseTime:6,
+      websiteVisits:410,
+      conversionRate:17,
+      stockValue:4500,
+      spareCapacity:6,
+      notes:'Most leads come through WhatsApp and Facebook. Fridays are quiet. Customers often delay quote approval unless followed up twice.',
+      channels:['WhatsApp','Facebook','Google Business','Calls','Referrals'],
+      pains:['Slow follow-up','Quotes not closing','Clients delaying payment','Idle staff / empty slots']
+    });
+    setStatus('Example data loaded.');
+  }
+
+  function scorePriority(score){
+    if(score >= 80) return {label:'High', cls:'high'};
+    if(score >= 50) return {label:'Medium', cls:'medium'};
+    return {label:'Low', cls:'low'};
+  }
+
+  function buildTasks(d){
+    const avgSale = d.avgSale || (d.monthlyRevenue > 0 ? d.monthlyRevenue / 20 : 1000);
+    const margin = (d.profitMargin || 30) / 100;
+    const tasks = [];
+    const pains = new Set(d.pains);
+
+    const staleLeadValue = d.staleLeads * avgSale * 0.35;
+    if(d.staleLeads > 0 || d.responseTime > 2 || pains.has('Slow follow-up')){
+      const score = Math.min(100, 48 + d.staleLeads * 5 + Math.min(25, d.responseTime * 3) + (pains.has('Slow follow-up') ? 12 : 0));
+      tasks.push({
+        title:'Follow up stale leads immediately',
+        reason:'Leads cool off fast. Response delay is directly hurting conversions.',
+        revenue: staleLeadValue,
+        profit: staleLeadValue * margin,
+        speed:'Today',
+        difficulty:'Easy',
+        score,
+        action:`Message every lead older than 24 hours through ${d.channels.includes('WhatsApp') ? 'WhatsApp first' : 'your fastest channel'} with a clear offer and a direct booking/payment link.`,
+        script:`Hi {{name}}, just checking in on your request. We still have availability and can get this sorted for you quickly. If you'd like, I can lock in your slot today and send the next step right now.`
+      });
+    }
+
+    const quoteCatchValue = d.quoteValue * Math.min(0.45, 0.12 + (d.openQuotes * 0.012));
+    if(d.openQuotes > 0 || pains.has('Quotes not closing')){
+      const score = Math.min(100, 42 + Math.min(34, d.openQuotes * 4) + (d.quoteValue > d.cashGoal ? 14 : 0) + (pains.has('Quotes not closing') ? 12 : 0));
+      tasks.push({
+        title:'Chase open quotes and ask for the close',
+        reason:'Quotes already sent are one of the fastest paths to cash because buyer intent already exists.',
+        revenue: quoteCatchValue,
+        profit: quoteCatchValue * margin,
+        speed:'Today',
+        difficulty:'Easy',
+        score,
+        action:'Call or message every open quote older than 24 hours. Ask one direct closing question and offer a deadline or fast-start slot.',
+        script:`Hi {{name}}, I wanted to follow up on your quote. We can still start soon, but I’m finalising this week’s schedule today. Would you like me to secure your spot and move this forward?`
+      });
+    }
+
+    const invoiceRecovery = d.overdueValue * 0.75;
+    if(d.overdueInvoices > 0 || d.overdueValue > 0 || pains.has('Clients delaying payment')){
+      const score = Math.min(100, 40 + Math.min(28, d.overdueInvoices * 7) + (d.overdueValue > 5000 ? 18 : 8) + (pains.has('Clients delaying payment') ? 12 : 0));
+      tasks.push({
+        title:'Collect overdue invoices',
+        reason:'This is not new selling. It is existing money that has not landed yet.',
+        revenue: invoiceRecovery,
+        profit: invoiceRecovery * Math.max(margin, 0.85),
+        speed:'Today',
+        difficulty:'Easy',
+        score,
+        action:'Send a short payment reminder with invoice reference, amount due, and payment method. Follow with a call for the biggest overdue account.',
+        script:`Hi {{name}}, quick reminder that invoice {{invoice}} for {{amount}} is overdue. Please send payment today or reply with your payment date so I can update our records.`
+      });
+    }
+
+    const reactivationValue = d.repeatCustomers * d.upsellValue * 0.18;
+    if(d.repeatCustomers > 0 || pains.has('Low repeat business')){
+      const score = Math.min(100, 35 + Math.min(25, d.repeatCustomers) + (d.upsellValue > 800 ? 10 : 5) + (pains.has('Low repeat business') ? 10 : 0));
+      tasks.push({
+        title:'Reactivate past customers with a simple offer',
+        reason:'Selling to old customers is faster and cheaper than acquiring new ones.',
+        revenue: reactivationValue,
+        profit: reactivationValue * margin,
+        speed:'24-72h',
+        difficulty:'Easy',
+        score,
+        action:'Send a short reactivation campaign to past customers with a limited-time convenience offer, refill, checkup, bundle, or upgrade.',
+        script:`Hi {{name}}, we’re opening a few priority slots this week for existing clients. If you want us to handle {{service}} again, reply YES and I’ll send the quickest option.`
+      });
+    }
+
+    const noShowSave = d.spareCapacity * avgSale * (d.noShowRate / 100) * 0.9;
+    if(d.noShowRate >= 8 || pains.has('Too many no-shows')){
+      const score = Math.min(100, 30 + Math.min(35, d.noShowRate * 2.2) + (d.spareCapacity > 0 ? 10 : 0) + (pains.has('Too many no-shows') ? 12 : 0));
+      tasks.push({
+        title:'Lock bookings with deposits and confirmations',
+        reason:'No-shows destroy revenue and create dead calendar space.',
+        revenue: noShowSave,
+        profit: noShowSave * margin,
+        speed:'This week',
+        difficulty:'Medium',
+        score,
+        action:'Require a deposit or confirmation for all new bookings. Send an automatic reminder and release unconfirmed slots.',
+        script:`Hi {{name}}, your booking is ready to secure. To lock in the slot, please send the deposit today. Once paid, I’ll confirm everything immediately.`
+      });
+    }
+
+    const capacityValue = d.spareCapacity * avgSale * 0.55;
+    if(d.spareCapacity > 0 || pains.has('Idle staff / empty slots')){
+      const score = Math.min(100, 28 + Math.min(30, d.spareCapacity * 4) + (d.channels.includes('WhatsApp') ? 8 : 0) + (pains.has('Idle staff / empty slots') ? 12 : 0));
+      tasks.push({
+        title:'Fill empty slots with a same-week offer',
+        reason:'Unused capacity expires. A fast offer can turn dead time into cash.',
+        revenue: capacityValue,
+        profit: capacityValue * margin,
+        speed:'24-48h',
+        difficulty:'Medium',
+        score,
+        action:'Send a same-week availability offer to leads, past customers, and WhatsApp contacts. Keep the offer simple and time-limited.',
+        script:`We have a few open slots available this week. If you’d like us to sort this out fast, reply now and I’ll send the earliest option and price.`
+      });
+    }
+
+    const stockClearValue = d.stockValue * 0.35;
+    if(d.stockValue > 0 || pains.has('Slow stock')){
+      const score = Math.min(100, 25 + Math.min(24, d.stockValue / 500) + (pains.has('Slow stock') ? 12 : 0));
+      tasks.push({
+        title:'Bundle or discount slow stock / unused capacity',
+        reason:'Dead stock and underused capacity quietly trap cash.',
+        revenue: stockClearValue,
+        profit: stockClearValue * Math.max(0.12, margin * 0.65),
+        speed:'This week',
+        difficulty:'Medium',
+        score,
+        action:'Create a clearance bundle, fast-action package, or add-on that converts old stock into immediate cash.',
+        script:`Quick special for this week only: we’ve packaged one of our most underused offers into a simpler deal to move fast. Want the details?`
+      });
+    }
+
+    const conversionLift = (d.websiteVisits * 0.05) * avgSale * ((100 - d.conversionRate) / 100) * 0.2;
+    if(d.websiteVisits > 100 && d.conversionRate < 25){
+      const score = Math.min(100, 24 + Math.min(26, d.websiteVisits / 20) + Math.min(18, (25 - d.conversionRate) * 1.5));
+      tasks.push({
+        title:'Tighten the offer on your top channel',
+        reason:'You already have attention. The issue may be weak positioning or unclear next steps.',
+        revenue: conversionLift,
+        profit: conversionLift * margin,
+        speed:'This week',
+        difficulty:'Medium',
+        score,
+        action:`Rewrite your main offer headline, add one proof point, one price anchor, and one direct call-to-action on ${d.channels[0] || 'your main channel'}.`,
+        script:`New this week: faster turnaround, clearer pricing, and limited spots. Message now for a same-day response and the quickest option.`
+      });
+    }
+
+    const priceLift = d.monthlyRevenue * 0.04;
+    if(d.monthlyRevenue > 0 && avgSale > 0){
+      const score = Math.min(100, 18 + (d.profitMargin < 25 ? 18 : 8) + (avgSale < 1500 ? 10 : 6));
+      tasks.push({
+        title:'Test a small price increase on new enquiries',
+        reason:'A slight increase can improve profit immediately without adding workload.',
+        revenue: priceLift,
+        profit: priceLift,
+        speed:'This month',
+        difficulty:'Medium',
+        score,
+        action:'Raise pricing slightly for new leads, anchor around value, and keep the premium linked to speed, convenience, or quality.',
+        script:`Our current priority booking option includes faster turnaround and direct support. I can send that package first if speed matters most.`
+      });
+    }
+
+    return tasks.sort((a,b) => b.score - a.score || b.revenue - a.revenue);
+  }
+
+  function buildInsight(d, tasks){
+    if(!tasks.length){
+      return 'No insight available.';
+    }
+    const top = tasks[0];
+    const leak = tasks.reduce((sum, t) => sum + t.revenue, 0);
+    const goalGap = Math.max(0, d.cashGoal - top.revenue);
+    const business = d.businessName || 'This business';
+
+    let insight = `${business} should focus on "${top.title.toLowerCase()}". `;
+    insight += `It is the fastest path to cash because it targets warm demand or money already owed. `;
+    insight += `Estimated near-term recoverable revenue is ${formatMoney(leak)}. `;
+    if(d.cashGoal > 0){
+      insight += goalGap <= 0
+        ? `Your top action alone could cover the 7-day cash goal of ${formatMoney(d.cashGoal)}. `
+        : `Your 7-day cash goal is ${formatMoney(d.cashGoal)}, so the top action gets you part of the way and the first 2-3 actions should be executed together. `;
+    }
+    if(d.responseTime > 4){
+      insight += `Response speed is a major problem at ${d.responseTime} hours average. `;
+    }
+    if(d.noShowRate >= 10){
+      insight += `No-shows are also leaking revenue and should be controlled with deposits or confirmations. `;
+    }
+    if(d.notes){
+      insight += `Owner note detected: ${d.notes}`;
+    }
+    return insight;
+  }
+
+  function buildSprint(tasks){
+    if(!tasks.length){
+      return '<div class="empty">Your sprint plan appears here after analysis.</div>';
+    }
+    const top3 = tasks.slice(0,3);
+    const windows = ['0-25 min','25-55 min','55-90 min'];
+    return top3.map((task, i) => `
+      <div class="step">
+        <div class="step-num">${i+1}</div>
+        <div class="step-card">
+          <h4>${windows[i]} • ${task.title}</h4>
+          <p>${task.action}</p>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function renderSummary(tasks, d){
+    const leak = tasks.reduce((sum, t) => sum + t.revenue, 0);
+    const profit = tasks.reduce((sum, t) => sum + t.profit, 0);
+    const top = tasks[0];
+
+    el('summaryCards').innerHTML = `
+      <div class="metric">
+        <small>Top Action</small>
+        <strong>${top ? top.title : '—'}</strong>
+        <span>${top ? top.reason : 'Run the engine to see the highest-value move.'}</span>
+      </div>
+      <div class="metric">
+        <small>Fast Cash Potential</small>
+        <strong>${formatMoney(top ? top.revenue : 0)}</strong>
+        <span>${top ? `${top.speed} impact window` : 'Estimated revenue that can be unlocked fastest.'}</span>
+      </div>
+      <div class="metric">
+        <small>Revenue Leak</small>
+        <strong>${formatMoney(leak)}</strong>
+        <span>${d.openQuotes > 0 ? `${d.openQuotes} open quote(s), ` : ''}${d.overdueInvoices > 0 ? `${d.overdueInvoices} overdue invoice(s), ` : ''}${d.staleLeads > 0 ? `${d.staleLeads} stale lead(s)` : 'combined revenue leakage estimate'}.</span>
+      </div>
+      <div class="metric">
+        <small>Profit Potential</small>
+        <strong>${formatMoney(profit)}</strong>
+        <span>Estimated gross profit from all recommended actions.</span>
+      </div>
+    `;
+  }
+
+  function renderTasks(tasks){
+    const target = el('taskList');
+    if(!tasks.length){
+      target.innerHTML = '<div class="empty">No action plan yet. Enter numbers and run the engine.</div>';
+      return;
+    }
+
+    target.innerHTML = tasks.map((task, i) => {
+      const pr = scorePriority(task.score);
+      return `
+        <article class="task">
+          <div class="task-top">
+            <div>
+              <h3>${i+1}. ${task.title}</h3>
+              <p>${task.reason}</p>
+            </div>
+            <div class="pill ${pr.cls}">${pr.label}</div>
+          </div>
+          <div class="task-meta">
+            <div class="mini">
+              <small>Revenue impact</small>
+              <strong>${formatMoney(task.revenue)}</strong>
+            </div>
+            <div class="mini">
+              <small>Profit impact</small>
+              <strong>${formatMoney(task.profit)}</strong>
+            </div>
+            <div class="mini">
+              <small>Execution window</small>
+              <strong>${task.speed}</strong>
+            </div>
+          </div>
+          <div class="footer-note"><strong>Next move:</strong> ${task.action}</div>
+        </article>
+      `;
+    }).join('');
+  }
+
+  function buildPlanText(d, tasks){
+    const name = d.businessName || 'Unnamed Business';
+    const leak = tasks.reduce((sum, t) => sum + t.revenue, 0);
+    const profit = tasks.reduce((sum, t) => sum + t.profit, 0);
+    return [
+      `AI ACTION ENGINE REPORT`,
+      `Business: ${name}`,
+      `Type: ${d.businessType}`,
+      `7-day cash goal: ${formatMoney(d.cashGoal)}`,
+      `Revenue leak estimate: ${formatMoney(leak)}`,
+      `Profit potential: ${formatMoney(profit)}`,
+      ``,
+      `TOP ACTIONS`,
+      ...tasks.slice(0,5).map((t, i) => `${i+1}. ${t.title} | Revenue: ${formatMoney(t.revenue)} | Profit: ${formatMoney(t.profit)} | Window: ${t.speed}\n   Why: ${t.reason}\n   Do this: ${t.action}`),
+      ``,
+      `BEST SCRIPT`,
+      tasks[0] ? tasks[0].script : 'No script generated.',
+      ``,
+      `NOTES`,
+      d.notes || 'None'
+    ].join('\n');
+  }
+
+  function run(){
+    const d = getData();
+    const tasks = buildTasks(d);
+
+    renderSummary(tasks, d);
+    renderTasks(tasks);
+    el('scriptBox').textContent = tasks[0] ? tasks[0].script : 'No script generated.';
+    el('timelineBox').innerHTML = buildSprint(tasks);
+    el('insightBox').textContent = buildInsight(d, tasks);
+    window.latestPlan = buildPlanText(d, tasks);
+    setStatus(tasks.length ? 'Action plan generated.' : 'Add more business data to improve results.');
+  }
+
+  el('runBtn').addEventListener('click', run);
+  el('saveBtn').addEventListener('click', saveData);
+  el('loadBtn').addEventListener('click', loadData);
+  el('resetBtn').addEventListener('click', resetData);
+  el('sampleBtn').addEventListener('click', sampleData);
+
+  el('copyBtn').addEventListener('click', async () => {
+    if(!window.latestPlan){
+      run();
+    }
+    try{
+      await navigator.clipboard.writeText(window.latestPlan || 'No plan available.');
+      setStatus('Plan copied to clipboard.');
+    }catch{
+      setStatus('Clipboard copy failed on this device/browser.');
+    }
+  });
+
+  el('printBtn').addEventListener('click', () => window.print());
+
+  // Autosave on input change
+  [...document.querySelectorAll('input, select, textarea')].forEach(node => {
+    node.addEventListener('change', () => localStorage.setItem(storageKey, JSON.stringify(getData())));
+  });
+  document.querySelectorAll('.chip').forEach(node => {
+    node.addEventListener('click', () => localStorage.setItem(storageKey, JSON.stringify(getData())));
+  });
+
+  // Load existing data on start
+  const existing = localStorage.getItem(storageKey);
+  if(existing){
+    try{ setData(JSON.parse(existing)); }catch{}
+  }
+})();
+</script>
+</body>
+</html>
